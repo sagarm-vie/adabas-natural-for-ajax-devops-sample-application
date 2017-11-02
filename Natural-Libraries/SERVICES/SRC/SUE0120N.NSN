@@ -1,0 +1,38 @@
+* >Natural Source Header 000000
+* :Mode S
+* :CP
+* <Natural Source Header
+/** New Subprogram SUE0120N.
+/**
+/** author sagarm         date: 20170820
+/* 
+/* read error text with USR0120N 
+/*
+define data 
+parameter using nccomm-p
+local using usr0120a
+end-define
+if p-lang is (n2) 
+  lang-numb := val(p-lang)
+  p-lang := 1
+end-if 
+if p-response.p-rspcode is (n4) 
+  error-number := val(p-response.p-rspcode)
+end-if  
+
+callnat 'USR0120N' param 
+decide on first value of response
+  value 0
+    p-response.p-rsptxt := short-text
+  value -1 
+    p-response.p-rsptxt := 'error message not found'   
+  value -2  
+    p-response.p-rsptxt := 'Short text not available with given language number'
+  value 3
+    p-response.p-rsptxt := 'Invalid Error Number'
+  value 4
+    p-response.p-rsptxt := 'Invalid Language Number'
+  none
+    compress 'Response code from USR0120N:' response into p-response.p-rsptxt
+end-decide    
+end

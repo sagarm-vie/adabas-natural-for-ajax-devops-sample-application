@@ -1,0 +1,16 @@
+DEFINE DATA PARAMETER
+/* >Natural Source Header 000000
+/* :Mode S
+/* :CP
+/* <Natural Source Header
+/** New Parameter Data Area USR0120A.
+/**
+/** author sagarm         date: 20170820
+/* 
+/* Parameter definition for userexit 0120 - reading text corresponding to error number
+1 param
+2 error-number   (n4)      /* Error number 
+2 lang-numb      (i1)      /* Language code
+2 response       (n4)      /* Error during execution of USR0120N 
+2 short-text     (a65)  
+END-DEFINE

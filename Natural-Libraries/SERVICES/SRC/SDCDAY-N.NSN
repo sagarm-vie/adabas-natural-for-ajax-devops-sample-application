@@ -1,0 +1,68 @@
+* >Natural Source Header 000000
+* :Mode S
+* :CP
+* <Natural Source Header
+/** SDCDAY-N.
+/**
+/** author sagarm         date: 20170820
+/* 
+/* The service counts the number of days between 2 dates 
+/* 
+/* common parameters : nccom-p
+/* service-specific parameters: 
+/*  1 #date-input              
+/*  2 #date-start      (n8)      start-date
+/*  2 #date-end        (n8)      end-date 
+/*  1 #date-output             
+/*  2 #date-days       (n2)      count of days
+/* 
+/* preconditions and verifications
+/* input-parameters must include valid dates with format YYYYMMDD   
+
+
+define data 
+parameter using nccomm-p  /* Common Parameters
+parameter
+1 #date-input             /* Input
+2 #date-start      (n8)
+2 #date-end        (n8)
+1 #date-output            /* Output
+2 #date-days       (n2)
+local
+1 #date-start-a    (a8)
+1 #date-start-d    (d)
+1 #date-end-a      (a8) 
+1 #date-end-d      (d)  
+end-define
+
+#date-start-a := #date-start
+#date-end-a   := #date-end
+
+if #date-start-a = mask(YYYYMMDD)
+  move edited #date-start-a to #date-start-d (em=YYYYMMDD)
+else
+  p-response.p-rspcode := 9001
+  p-response.p-rsptxt  := 'start-date is empty or not YYYYMMDD'
+  escape routine
+end-if
+
+if #date-end-a  = mask(YYYYMMDD)
+  move edited #date-end-a  to #date-end-d  (em=YYYYMMDD)
+else
+  p-response.p-rspcode := 9002
+  p-response.p-rsptxt  := 'end-date is empty or not YYYYMMDD'
+  escape routine
+end-if
+
+#date-start-a := #date-start-a  /* that was a change for feature1 from devops-workspace  
+
+#date-days := #date-end-d - #date-start-d  
+* #date-days := #date-days / 0
+
+on error
+  p-response.p-rspcode := *error-nr
+  CALLNAT 'SUE0120N' p-com p-response 
+  escape routine
+end-error
+
+end
