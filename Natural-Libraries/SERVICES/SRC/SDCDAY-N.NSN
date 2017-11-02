@@ -20,49 +20,53 @@
 /* input-parameters must include valid dates with format YYYYMMDD   
 
 
-define data 
-parameter using nccomm-p  /* Common Parameters
-parameter
-1 #date-input             /* Input
-2 #date-start      (n8)
-2 #date-end        (n8)
-1 #date-output            /* Output
-2 #date-days       (n2)
-local
-1 #date-start-a    (a8)
-1 #date-start-d    (d)
-1 #date-end-a      (a8) 
-1 #date-end-d      (d)  
-end-define
+DEFINE DATA 
+PARAMETER USING NCCOMM-P  /* Common Parameters
+PARAMETER
+1 #DATE-INPUT             /* Input
+2 #DATE-START      (N8)
+2 #DATE-END        (N8)
+1 #DATE-OUTPUT            /* Output  
+2 #DATE-DAYS       (N2)
+LOCAL
+1 #DATE-START-A    (A8)
+1 #DATE-START-D    (D)
+1 #DATE-END-A      (A8) 
+1 #DATE-END-D      (D)  
+END-DEFINE
 
-#date-start-a := #date-start
-#date-end-a   := #date-end
+#DATE-START-A := #DATE-START
+#DATE-END-A   := #DATE-END
 
-if #date-start-a = mask(YYYYMMDD)
-  move edited #date-start-a to #date-start-d (em=YYYYMMDD)
-else
-  p-response.p-rspcode := 9001
-  p-response.p-rsptxt  := 'start-date is empty or not YYYYMMDD'
-  escape routine
-end-if
+* that is a change from NatONE Training
+ #DATE-END-A   := #DATE-END-A
 
-if #date-end-a  = mask(YYYYMMDD)
-  move edited #date-end-a  to #date-end-d  (em=YYYYMMDD)
-else
-  p-response.p-rspcode := 9002
-  p-response.p-rsptxt  := 'end-date is empty or not YYYYMMDD'
-  escape routine
-end-if
+IF #DATE-START-A = MASK(YYYYMMDD)
+  MOVE EDITED #DATE-START-A TO #DATE-START-D (EM=YYYYMMDD)
+ELSE
+  P-RESPONSE.P-RSPCODE := 9001
+*   p-response.p-rsptxt  := 'start-date is empty or not YYYYMMDD'
+  P-RESPONSE.P-RSPTXT  := 'start date has wrong format'
+  ESCAPE ROUTINE
+END-IF
 
-#date-start-a := #date-start-a  /* that was a change for feature1 from devops-workspace  
+IF #DATE-END-A  = MASK(YYYYMMDD)
+  MOVE EDITED #DATE-END-A  TO #DATE-END-D  (EM=YYYYMMDD)
+ELSE
+  P-RESPONSE.P-RSPCODE := 9002
+  P-RESPONSE.P-RSPTXT  := 'end-date is empty or not YYYYMMDD'
+  ESCAPE ROUTINE
+END-IF
 
-#date-days := #date-end-d - #date-start-d  
+#DATE-START-A := #DATE-START-A  /* that was a change for feature1 from devops-workspace  
+
+#DATE-DAYS := #DATE-END-D - #DATE-START-D  
 * #date-days := #date-days / 0
 
-on error
-  p-response.p-rspcode := *error-nr
-  CALLNAT 'SUE0120N' p-com p-response 
-  escape routine
-end-error
+ON ERROR
+  P-RESPONSE.P-RSPCODE := *ERROR-NR
+  CALLNAT 'SUE0120N' P-COM P-RESPONSE 
+  ESCAPE ROUTINE
+END-ERROR
 
-end
+END
